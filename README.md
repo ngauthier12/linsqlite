@@ -1,2 +1,2 @@
 # linsqlite
-Language Integrated SQLite API
+Language Integrated SQLite Wrapper
