@@ -3,6 +3,8 @@ from enum import Enum
 
 class ConditionType(Enum):
     GREATER_THAN = ">"
+    LESS_THAN = "<"
+    EQUALS = "="
 
 
 class Condition:

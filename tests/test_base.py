@@ -12,6 +12,7 @@ class TestBase(unittest.TestCase):
         self.source_db_path = "cars.sqlite"
         self.temp_db_path = "temp.sqlite"
 
+        # Add tests if working dir is up one (for CI)
         if not os.path.exists(self.source_db_path):
             self.source_db_path = "tests/" + self.source_db_path
             self.temp_db_path = "tests/" + self.temp_db_path

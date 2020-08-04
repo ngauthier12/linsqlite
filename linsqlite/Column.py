@@ -9,3 +9,9 @@ class Column:
 
     def __gt__(self, other):
         return Condition(self, ConditionType.GREATER_THAN, other)
+
+    def __lt__(self, other):
+        return Condition(self, ConditionType.LESS_THAN, other)
+
+    def __eq__(self, other):
+        return Condition(self, ConditionType.EQUALS, other)

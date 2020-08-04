@@ -3,9 +3,6 @@ from tests.test_base import TestBase
 
 class TestSelect(TestBase):
 
-    source_db_path = "cars.sqlite"
-    temp_db_path = "temp.sqlite"
-
     def test_select_single(self):
         expected = [
             {'make': 'chevrolet'},
