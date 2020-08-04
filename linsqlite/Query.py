@@ -87,3 +87,13 @@ class Query:
     def __str__(self):
         result_strings = list(map(lambda x: str(x), self))
         return "[{0}]".format(", ".join(result_strings))
+
+    def __len__(self):
+        if not self.__is_executed:
+            self.__execute()
+        return len(self.__results)
+
+    def __getitem__(self, item):
+        if not self.__is_executed:
+            self.__execute()
+        return self.__results[item]
