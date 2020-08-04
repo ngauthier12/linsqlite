@@ -12,13 +12,19 @@ class Table:
         self.name = table_name
         self.__cursor = cursor
 
+        columns = []
         for column_name in column_names:
             column = Column(column_name)
             setattr(self, column_name, column)
+            columns.append(column)
+        self.__columns = columns
 
     def __str__(self):
-        column_desc = str(list(map(lambda x: str(x), self.__dict__)))
+        column_desc = str(list(map(lambda x: str(x), self.__columns)))
         return "Table '{0}': {1}".format(self.name, column_desc)
+
+    def get_columns(self):
+        return self.__columns
 
     def select(self, predicate):
         assert isinstance(predicate, types.LambdaType)

@@ -54,8 +54,27 @@ class Query:
             conditions = "WHERE " + " AND ".join(list(map(lambda x: str(x), self.__conditions)))
 
         query = "SELECT {0} FROM {1} {2};".format(column_names, table_name, conditions)
-        #print(query)
-        self.__results = self.__cursor.execute(query)
+        # print(query)
+        results_raw = self.__cursor.execute(query)
+
+        columns = self.__columns
+        if len(columns) == 0:
+            columns = self.__table.get_columns()
+
+        results_column_names = list(map(lambda x: x.name, columns))
+
+        self.__results = self.__format_results(results_raw, results_column_names)
+
+    @staticmethod
+    def __format_results(results_raw, column_names):
+        results = []
+        for row_raw in results_raw:
+            row = {}
+            for column_index in range(len(row_raw)):
+                column_name = column_names[column_index]
+                row[column_name] = row_raw[column_index]
+            results.append(row)
+        return results
 
     def __iter__(self):
         if not self.__is_executed:
