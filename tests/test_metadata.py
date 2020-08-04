@@ -1,21 +1,7 @@
-import unittest
-import shutil
-import os
-from linsqlite.Connection import Connection
+from tests.test_base import TestBase
 
 
-class TestMetaData(unittest.TestCase):
-
-    source_db_path = "cars.sqlite"
-    temp_db_path = "temp.sqlite"
-
-    def setUp(self):
-        shutil.copy(self.source_db_path, self.temp_db_path)
-        self.connection = Connection(self.temp_db_path)
-
-    def tearDown(self):
-        self.connection.close()
-        os.remove(self.temp_db_path)
+class TestMetaData(TestBase):
 
     def test_tables(self):
         expected_table_names = ['cars']

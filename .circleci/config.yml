@@ -12,8 +12,7 @@ jobs:
       - python/install-deps
       - python/save-cache
       - run:
-          working_directory: ./tests
-          command: python -m unittest discover -s . -t .
+          command: python -m unittest
           name: Test
 
 workflows:
