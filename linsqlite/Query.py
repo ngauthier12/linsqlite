@@ -1,6 +1,7 @@
 import types
 from linsqlite.Column import Column
 
+
 class Query:
 
     def __init__(self, table):
@@ -8,6 +9,7 @@ class Query:
         self.__table = table
         self.__filters = []
         self.__columns = []
+        self.__results = None
 
     def select(self, predicate):
         assert isinstance(predicate, types.LambdaType)
@@ -28,8 +30,17 @@ class Query:
 
         return self
 
+    def where(self, predicate):
+        assert isinstance(predicate, types.LambdaType)
+        assert not self.__is_executed
+
+        # todo
+
+        return self
+
     def __execute(self):
         # todo
+        self.__results = []
         pass
 
     def __iter__(self):
@@ -39,3 +50,6 @@ class Query:
 
     def __next__(self):
         return self.__results.__next__()
+
+    def __str__(self):
+        return "[{0}]".format(", ".join(self))
