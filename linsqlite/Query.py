@@ -4,8 +4,9 @@ from linsqlite.Column import Column
 
 class Query:
 
-    def __init__(self, table):
+    def __init__(self, cursor, table):
         self.__is_executed = False
+        self.__cursor = cursor
         self.__table = table
         self.__filters = []
         self.__columns = []
@@ -39,9 +40,19 @@ class Query:
         return self
 
     def __execute(self):
-        # todo
-        self.__results = []
-        pass
+        table_name = self.__table.name
+
+        column_names = None
+        if len(self.__columns) > 0:
+            column_names = ", ".join(list(map(lambda x: x.name, self.__columns)))
+        else:
+            column_names = "*"
+
+        # todo: filters
+        filters = ""
+
+        query = "SELECT {0} FROM {1} {2};".format(column_names, table_name, filters)
+        self.__results = self.__cursor.execute(query)
 
     def __iter__(self):
         if not self.__is_executed:
@@ -52,4 +63,5 @@ class Query:
         return self.__results.__next__()
 
     def __str__(self):
-        return "[{0}]".format(", ".join(self))
+        result_strings = list(map(lambda x: str(x), self))
+        return "[{0}]".format(", ".join(result_strings))

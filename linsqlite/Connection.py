@@ -15,7 +15,7 @@ class Connection:
         # Fetch meta-data
         for table_name in self.__get_table_names():
             column_names = self.__get_column_names(table_name)
-            table = Table(table_name, column_names)
+            table = Table(self.__cursor, table_name, column_names)
             setattr(self, table_name, table)
 
     def __get_table_names(self):
