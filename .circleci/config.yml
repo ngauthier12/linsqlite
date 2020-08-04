@@ -13,7 +13,7 @@ jobs:
       - python/save-cache
       - run:
           working_directory: ./test
-          command: python -m unittest discover
+          command: python -m unittest discover -s . -t .
           name: Test
 
 workflows:
