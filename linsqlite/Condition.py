@@ -4,7 +4,8 @@ from enum import Enum
 class ConditionType(Enum):
     GREATER_THAN = ">"
     LESS_THAN = "<"
-    EQUALS = "="
+    EQUALS = "IS"
+    NOT_EQUALS = "IS NOT"
 
 
 class Condition:

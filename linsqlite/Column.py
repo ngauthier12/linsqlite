@@ -15,3 +15,6 @@ class Column:
 
     def __eq__(self, other):
         return Condition(self, ConditionType.EQUALS, other)
+
+    def __ne__(self, other):
+        return Condition(self, ConditionType.NOT_EQUALS, other)
