@@ -42,6 +42,11 @@ class Query:
 
         return self
 
+    def execute(self):
+        if not self.__is_executed:
+            self.__execute()
+        return self.__results
+
     def __execute(self):
         table_name = self.__table.name
 

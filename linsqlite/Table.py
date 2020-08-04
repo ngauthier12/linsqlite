@@ -31,6 +31,9 @@ class Table:
         query = Query(self.__cursor, self)
         return query.select(predicate)
 
+    def select_all(self):
+        return Query(self.__cursor, self)
+
     def where(self, predicate):
         assert isinstance(predicate, types.LambdaType)
         query = Query(self.__cursor, self)
