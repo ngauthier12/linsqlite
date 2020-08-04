@@ -1,5 +1,6 @@
 import types
 from linsqlite.Column import Column
+from linsqlite.Condition import Condition
 
 
 class Query:
@@ -8,7 +9,7 @@ class Query:
         self.__is_executed = False
         self.__cursor = cursor
         self.__table = table
-        self.__filters = []
+        self.__conditions = []
         self.__columns = []
         self.__results = None
 
@@ -35,23 +36,25 @@ class Query:
         assert isinstance(predicate, types.LambdaType)
         assert not self.__is_executed
 
-        # todo
+        condition = predicate(self.__table)
+        assert isinstance(condition, Condition)
+        self.__conditions.append(condition)
 
         return self
 
     def __execute(self):
         table_name = self.__table.name
 
-        column_names = None
+        column_names = "*"
         if len(self.__columns) > 0:
             column_names = ", ".join(list(map(lambda x: x.name, self.__columns)))
-        else:
-            column_names = "*"
 
-        # todo: filters
-        filters = ""
+        conditions = ""
+        if len(self.__conditions) > 0:
+            conditions = "WHERE " + " AND ".join(list(map(lambda x: str(x), self.__conditions)))
 
-        query = "SELECT {0} FROM {1} {2};".format(column_names, table_name, filters)
+        query = "SELECT {0} FROM {1} {2};".format(column_names, table_name, conditions)
+        #print(query)
         self.__results = self.__cursor.execute(query)
 
     def __iter__(self):
