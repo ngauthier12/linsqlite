@@ -11,20 +11,21 @@ class Connection:
         assert connection is not None, "Could not connect to database"
         self.__connection = connection
         self.__cursor = connection.cursor()
-        self.__table_by_name = {}
 
-    def get_table(self, table_name):
-        assert isinstance(table_name, str), "Expecting db_path to be of type str"
+        # Fetch meta-data
+        for table_name in self.__get_table_names():
+            column_names = self.__get_column_names(table_name)
+            table = Table(table_name, column_names)
+            setattr(self, table_name, table)
 
-        # If table meta-data is already available, return it
-        if table_name in self.__table_by_name:
-            return self.__table_by_name[table_name]
+    def __get_table_names(self):
+        tables_info_query = "SELECT name FROM sqlite_master WHERE type='table';"
+        tables_info = self.__cursor.execute(tables_info_query)
 
-        # Otherwise, get column_names and create table meta-data
-        column_names = self.__get_column_names(table_name)
-        table = Table(table_name, column_names)
-        self.__table_by_name[table_name] = table
-        return table
+        table_names = []
+        for row in tables_info.fetchall():
+            table_names.append(row[0])
+        return table_names
 
     def __get_column_names(self, table_name):
         table_info_query = "SELECT name FROM PRAGMA_TABLE_INFO('{0}');".format(table_name)
@@ -33,5 +34,4 @@ class Connection:
         column_names = []
         for row in table_info.fetchall():
             column_names.append(row[0])
-
         return column_names
