@@ -4,6 +4,8 @@ from linsqlite.Table import Table
 
 class Connection:
 
+    ignored_tables = ["sqlite_sequence"]
+
     def __init__(self, db_path):
         assert isinstance(db_path, str), "Expecting db_path to be of type str"
 
@@ -13,10 +15,21 @@ class Connection:
         self.__cursor = connection.cursor()
 
         # Fetch meta-data
+        tables = []
         for table_name in self.__get_table_names():
+            if table_name in self.ignored_tables:
+                continue
             column_names = self.__get_column_names(table_name)
             table = Table(self.__cursor, table_name, column_names)
             setattr(self, table_name, table)
+            tables.append(table)
+        self.__tables = tables
+
+    def close(self):
+        self.__connection.close()
+
+    def get_tables(self):
+        return self.__tables
 
     def __get_table_names(self):
         tables_info_query = "SELECT name FROM sqlite_master WHERE type='table';"
