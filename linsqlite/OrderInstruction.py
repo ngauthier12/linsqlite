@@ -9,7 +9,7 @@ class OrderDirection(Enum):
 class OrderInstruction:
 
     def __init__(self, column, direction):
-        assert isinstance(direction, OrderDirection)
+        assert isinstance(direction, OrderDirection), "direction is expected to be an OrderDirection"
 
         self.column = column
         self.direction = direction

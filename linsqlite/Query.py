@@ -18,30 +18,30 @@ class Query:
         self.__results = None
 
     def select(self, predicate):
-        assert isinstance(predicate, types.LambdaType)
-        assert not self.__is_executed
+        assert isinstance(predicate, types.LambdaType), "select expects a lambda 'predicate'"
+        assert not self.__is_executed, "cannot modify query after its been executed"
 
         # Only 1 select per query for now.
-        assert len(self.__columns) == 0
+        assert len(self.__columns) == 0, "only one select per query is supported"
 
         # Execute predicate on meta-data, and keep track of selected columns.
         result = predicate(self.__table)
         if isinstance(result, Column):
             self.__columns.append(result)
         elif isinstance(result, tuple):
-            assert len(result) > 0
+            assert len(result) > 0, "select expects a non-empty tuple"
             for column in result:
-                assert isinstance(column, Column)
+                assert isinstance(column, Column), "select by tuple has encountered a non-column entry"
                 self.__columns.append(column)
 
         return self
 
     def where(self, predicate):
-        assert isinstance(predicate, types.LambdaType)
-        assert not self.__is_executed
+        assert isinstance(predicate, types.LambdaType), "where expects a lambda 'predicate'"
+        assert not self.__is_executed, "cannot modify query after its been executed"
 
         condition = predicate(self.__table)
-        assert isinstance(condition, Condition)
+        assert isinstance(condition, Condition), "where predicate has returned a non-condition"
         self.__conditions.append(condition)
 
         return self
@@ -55,8 +55,8 @@ class Query:
         return self
 
     def __order_by(self, predicate, direction):
-        assert isinstance(predicate, types.LambdaType)
-        assert not self.__is_executed
+        assert isinstance(predicate, types.LambdaType), "__order_by expects a lambda 'predicate'"
+        assert not self.__is_executed, "cannot modify query after its been executed"
 
         column = predicate(self.__table)
         assert isinstance(column, Column)
@@ -67,6 +67,7 @@ class Query:
     def take(self, count):
         assert isinstance(count, int) and count > 0, "take expects positive integer 'count'"
         assert self.__take is None, "only 1 take can be specified by query"
+        assert not self.__is_executed, "cannot modify query after its been executed"
         self.__take = count
         return self
 
@@ -74,12 +75,13 @@ class Query:
         assert isinstance(count, int) and count > 0, "skip expects positive integer 'count'"
         assert self.__skip is None, "only 1 skip can be specified by query"
         assert self.__take is not None, "skip statement can only be used after a take statement"
+        assert not self.__is_executed, "cannot modify query after its been executed"
         self.__skip = count
         return self
 
     def execute(self):
-        if not self.__is_executed:
-            self.__execute()
+        assert not self.__is_executed, "query already executed"
+        self.__execute()
         return self.__results
 
     def __execute(self):
@@ -118,7 +120,7 @@ class Query:
             order_instructions,
             limit,
             offset)
-        print(query)
+        #print(query)
 
         results_raw = self.__cursor.execute(query)
 

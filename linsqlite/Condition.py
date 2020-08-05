@@ -11,7 +11,7 @@ class ConditionType(Enum):
 class Condition:
 
     def __init__(self, column, condition_type, value):
-        assert isinstance(condition_type, ConditionType)
+        assert isinstance(condition_type, ConditionType), "condition_type is expected to be of a ConditionType"
 
         self.column = column
         self.type = condition_type
