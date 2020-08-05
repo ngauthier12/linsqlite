@@ -48,3 +48,13 @@ class Table:
         assert isinstance(predicate, types.LambdaType)
         query = Query(self.__cursor, self)
         return query.order_by_descending(predicate)
+
+    def take(self, count):
+        assert isinstance(count, int) and count > 0
+        query = Query(self.__cursor, self)
+        return query.take(count)
+
+    def skip(self, count):
+        assert isinstance(count, int) and count > 0
+        query = Query(self.__cursor, self)
+        return query.skip(count)

@@ -13,6 +13,8 @@ class Query:
         self.__conditions = []
         self.__columns = []
         self.__order_instructions = []
+        self.__skip = None
+        self.__take = None
         self.__results = None
 
     def select(self, predicate):
@@ -62,6 +64,19 @@ class Query:
         order_instruction = OrderInstruction(column, direction)
         self.__order_instructions.append(order_instruction)
 
+    def take(self, count):
+        assert isinstance(count, int) and count > 0, "take expects positive integer 'count'"
+        assert self.__take is None, "only 1 take can be specified by query"
+        self.__take = count
+        return self
+
+    def skip(self, count):
+        assert isinstance(count, int) and count > 0, "skip expects positive integer 'count'"
+        assert self.__skip is None, "only 1 skip can be specified by query"
+        assert self.__take is not None, "skip statement can only be used after a take statement"
+        self.__skip = count
+        return self
+
     def execute(self):
         if not self.__is_executed:
             self.__execute()
@@ -84,10 +99,27 @@ class Query:
         # {3} order_instructions
         order_instructions = ""
         if len(self.__order_instructions) > 0:
-            order_instructions = "ORDER BY " + ", ".join(list(map(lambda  x: str(x), self.__order_instructions)))
+            order_instructions = "ORDER BY " + ", ".join(list(map(lambda x: str(x), self.__order_instructions)))
 
-        query = "SELECT {0} FROM {1} {2} {3};".format(column_names, table_name, conditions, order_instructions)
-        # print(query)
+        # {4} limit
+        limit = ""
+        if self.__take is not None:
+            limit = "LIMIT {0}".format(str(self.__take))
+
+        # {5} offset
+        offset = ""
+        if self.__skip is not None:
+            offset = "OFFSET {0}".format(str(self.__skip))
+
+        query = "SELECT {0} FROM {1} {2} {3} {4} {5};".format(
+            column_names,
+            table_name,
+            conditions,
+            order_instructions,
+            limit,
+            offset)
+        print(query)
+
         results_raw = self.__cursor.execute(query)
 
         columns = self.__columns
