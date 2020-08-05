@@ -1,6 +1,7 @@
 import types
 from linsqlite.Column import Column
 from linsqlite.Condition import Condition
+from linsqlite.OrderInstruction import *
 
 
 class Query:
@@ -11,6 +12,7 @@ class Query:
         self.__table = table
         self.__conditions = []
         self.__columns = []
+        self.__order_instructions = []
         self.__results = None
 
     def select(self, predicate):
@@ -42,23 +44,49 @@ class Query:
 
         return self
 
+    def order_by(self, predicate):
+        self.__order_by(predicate, OrderDirection.ASCENDING)
+        return self
+
+    def order_by_descending(self, predicate):
+        self.__order_by(predicate, OrderDirection.DESCENDING)
+        return self
+
+    def __order_by(self, predicate, direction):
+        assert isinstance(predicate, types.LambdaType)
+        assert not self.__is_executed
+
+        column = predicate(self.__table)
+        assert isinstance(column, Column)
+
+        order_instruction = OrderInstruction(column, direction)
+        self.__order_instructions.append(order_instruction)
+
     def execute(self):
         if not self.__is_executed:
             self.__execute()
         return self.__results
 
     def __execute(self):
-        table_name = self.__table.name
-
+        # {0} column_names
         column_names = "*"
         if len(self.__columns) > 0:
             column_names = ", ".join(list(map(lambda x: x.name, self.__columns)))
 
+        # {1} column_names
+        table_name = self.__table.name
+
+        # {2} conditions
         conditions = ""
         if len(self.__conditions) > 0:
             conditions = "WHERE " + " AND ".join(list(map(lambda x: str(x), self.__conditions)))
 
-        query = "SELECT {0} FROM {1} {2};".format(column_names, table_name, conditions)
+        # {3} order_instructions
+        order_instructions = ""
+        if len(self.__order_instructions) > 0:
+            order_instructions = "ORDER BY " + ", ".join(list(map(lambda  x: str(x), self.__order_instructions)))
+
+        query = "SELECT {0} FROM {1} {2} {3};".format(column_names, table_name, conditions, order_instructions)
         # print(query)
         results_raw = self.__cursor.execute(query)
 

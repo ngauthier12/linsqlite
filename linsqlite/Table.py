@@ -38,3 +38,13 @@ class Table:
         assert isinstance(predicate, types.LambdaType)
         query = Query(self.__cursor, self)
         return query.where(predicate)
+
+    def order_by(self, predicate):
+        assert isinstance(predicate, types.LambdaType)
+        query = Query(self.__cursor, self)
+        return query.order_by(predicate)
+
+    def order_by_descending(self, predicate):
+        assert isinstance(predicate, types.LambdaType)
+        query = Query(self.__cursor, self)
+        return query.order_by_descending(predicate)
