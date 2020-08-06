@@ -22,7 +22,7 @@ class Condition:
         operator = self.type.value
 
         value = self.value
-        if value is str:
+        if isinstance(value, str):
             value = "'{0}'".format(self.value)
         else:
             value = str(value)

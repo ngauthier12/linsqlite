@@ -21,5 +21,65 @@ class TestLimitOffset(TestBase):
 
     def test_skip_no_take(self):
         def do_query():
-            self.connection.cars.skip(1).execute()
+            self.connection.cars.skip(1)
         self.assertRaises(AssertionError, do_query)
+
+    def test_multiple_take(self):
+        def do_query():
+            self.connection.cars.take(2).take(1)
+        self.assertRaises(AssertionError, do_query)
+
+    def test_multiple_skip(self):
+        def do_query():
+            self.connection.cars.skip(1).skip(1)
+        self.assertRaises(AssertionError, do_query)
+
+    def test_take_none(self):
+        def do_query():
+            self.connection.cars.take(None)
+        self.assertRaises(AssertionError, do_query)
+
+    def test_skip_none(self):
+        def do_query():
+            self.connection.cars.take(2).skip(None)
+        self.assertRaises(AssertionError, do_query)
+
+    def test_skip_none(self):
+        def do_query():
+            self.connection.cars.take(2).skip(None)
+        self.assertRaises(AssertionError, do_query)
+
+    def test_take_wrong_type(self):
+        def do_query():
+            self.connection.cars.take("porsche")
+        self.assertRaises(AssertionError, do_query)
+
+    def test_skip_wrong_type(self):
+        def do_query():
+            self.connection.cars.take(2).skip("mercedes")
+        self.assertRaises(AssertionError, do_query)
+
+    def test_take_0(self):
+        def do_query():
+            self.connection.cars.take(0)
+        self.assertRaises(AssertionError, do_query)
+
+    def test_take_negative(self):
+        def do_query():
+            self.connection.cars.take(-1)
+        self.assertRaises(AssertionError, do_query)
+
+    def test_skip_0(self):
+        def do_query():
+            self.connection.cars.take(2).skip(0)
+        self.assertRaises(AssertionError, do_query)
+
+    def test_skip_negative(self):
+        def do_query():
+            self.connection.cars.take(2).skip(-1)
+        self.assertRaises(AssertionError, do_query)
+
+    def test_chaining(self):
+        query = self.connection.cars.select_all()
+        query2 = query.take(2)
+        self.assertEqual(query, query2)

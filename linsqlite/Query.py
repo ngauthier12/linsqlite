@@ -33,6 +33,8 @@ class Query:
             for column in result:
                 assert isinstance(column, Column), "select by tuple has encountered a non-column entry"
                 self.__columns.append(column)
+        else:
+            assert False, "lambda expected to returns either a column or a tuple"
 
         return self
 
@@ -41,7 +43,7 @@ class Query:
         assert not self.__is_executed, "cannot modify query after its been executed"
 
         condition = predicate(self.__table)
-        assert isinstance(condition, Condition), "where predicate has returned a non-condition"
+        assert isinstance(condition, Condition), "where predicate has returned a non-Condition"
         self.__conditions.append(condition)
 
         return self
@@ -59,7 +61,7 @@ class Query:
         assert not self.__is_executed, "cannot modify query after its been executed"
 
         column = predicate(self.__table)
-        assert isinstance(column, Column)
+        assert isinstance(column, Column), "where predicate has returned a non-OrderInstruction"
 
         order_instruction = OrderInstruction(column, direction)
         self.__order_instructions.append(order_instruction)
@@ -80,7 +82,7 @@ class Query:
         return self
 
     def execute(self):
-        assert not self.__is_executed, "query already executed"
+        assert self.__is_executed is not True, "query already executed"
         self.__execute()
         return self.__results
 
@@ -131,6 +133,7 @@ class Query:
         results_column_names = list(map(lambda x: x.name, columns))
 
         self.__results = self.__format_results(results_raw, results_column_names)
+        self.__is_executed = True
 
     @staticmethod
     def __format_results(results_raw, column_names):

@@ -24,3 +24,8 @@ class TestExecution(TestBase):
     def test_execute_get_item(self):
         result = self.connection.cars.select(lambda x: x.make).where(lambda x: x.year != 2017)
         self.assertEqual(result[1]["make"], "toyota")
+
+    def test_double_execution(self):
+        result = self.connection.cars.select(lambda x: x.make).where(lambda x: x.year != 2017)
+        self.assertEqual(result[1]["make"], "toyota")
+        self.assertRaises(AssertionError, result.execute)
