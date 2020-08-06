@@ -96,24 +96,24 @@ class Query:
         # {2} conditions
         conditions = ""
         if len(self.__conditions) > 0:
-            conditions = "WHERE " + " AND ".join(list(map(lambda x: str(x), self.__conditions)))
+            conditions = " WHERE " + " AND ".join(list(map(lambda x: str(x), self.__conditions)))
 
         # {3} order_instructions
         order_instructions = ""
         if len(self.__order_instructions) > 0:
-            order_instructions = "ORDER BY " + ", ".join(list(map(lambda x: str(x), self.__order_instructions)))
+            order_instructions = " ORDER BY " + ", ".join(list(map(lambda x: str(x), self.__order_instructions)))
 
         # {4} limit
         limit = ""
         if self.__take is not None:
-            limit = "LIMIT {0}".format(str(self.__take))
+            limit = " LIMIT {0}".format(str(self.__take))
 
         # {5} offset
         offset = ""
         if self.__skip is not None:
-            offset = "OFFSET {0}".format(str(self.__skip))
+            offset = " OFFSET {0}".format(str(self.__skip))
 
-        query = "SELECT {0} FROM {1} {2} {3} {4} {5};".format(
+        query = "SELECT {0} FROM {1}{2}{3}{4}{5};".format(
             column_names,
             table_name,
             conditions,
