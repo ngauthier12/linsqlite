@@ -14,8 +14,11 @@ jobs:
       - run:
           command: python -m unittest > test_results.txt
           name: Test
-      - store_test_results:
+      - store_artifacts:
           path: test_results.txt
+          destination: test_results
+      - store_test_results:
+          path: test_results
 
 workflows:
   main:
