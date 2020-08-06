@@ -12,8 +12,10 @@ jobs:
       - python/install-deps
       - python/save-cache
       - run:
-          command: python -m unittest
+          command: python -m unittest >> test_results.txt
           name: Test
+        - store_test_results:
+            path: test_results.txt
 
 workflows:
   main:
